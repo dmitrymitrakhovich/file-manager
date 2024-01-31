@@ -155,6 +155,24 @@ const init = async () => {
         }
         break;
 
+      case 'rn':
+        try {
+          const [pathToFile, fileName] = args;
+          const filePath = process.cwd() + path.sep + pathToFile;
+
+          const isFileExist = await checkExist(filePath);
+
+          if (!isFileExist) {
+            process.stdout.write(`Operation failed. File doesn't exist` + EOL);
+            break;
+          }
+
+          await fsp.rename(filePath, fileName);
+        } catch (error) {
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
+        }
+        break;
+
       case '.exit':
         process.stdout.write(
           `Thank you for using File Manager, ${
