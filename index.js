@@ -41,6 +41,44 @@ const init = async () => {
 
     switch (command) {
       case 'ls':
+        try {
+          const [targetPath = ''] = args;
+
+          const destinationPath = targetPath
+            ? process.cwd() + path.sep + targetPath
+            : process.cwd();
+
+          const list = await fsp.readdir(destinationPath, {
+            withFileTypes: true,
+          });
+
+          const fileTypes = {
+            1: 'file',
+            2: 'directory',
+          };
+
+          const listWithTypes = list.map((file) => {
+            const typeSymbol = Object.getOwnPropertySymbols(file)[0];
+            const fileTypeValue = file[typeSymbol];
+
+            return {
+              Name: file.name,
+              Type: fileTypes[fileTypeValue],
+            };
+          });
+
+          const sortedListByTypes = listWithTypes.sort((a, b) => {
+            const typeComparison = a.Type.localeCompare(b.Type);
+            if (typeComparison !== 0) {
+              return typeComparison;
+            }
+            return a.Name.localeCompare(b.Name);
+          });
+
+          console.table(sortedListByTypes);
+        } catch (err) {
+          console.error(err);
+        }
         break;
 
       case 'up':
@@ -63,8 +101,7 @@ const init = async () => {
           process.chdir(process.cwd() + path.sep + targetPath);
           process.stdout.write(`You are currently in ${process.cwd()}` + EOL);
         } catch (error) {
-          console.error(error.message);
-          process.stdout.write(`Incorrect path` + EOL);
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
         }
 
         break;
@@ -78,7 +115,9 @@ const init = async () => {
         process.exit(0);
 
       default:
-        process.stdout.write('Operation failed' + EOL);
+        process.stdout.write(
+          `Operation failed. Command not found: ${command}` + EOL
+        );
         break;
     }
   });
