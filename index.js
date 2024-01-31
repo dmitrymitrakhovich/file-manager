@@ -1,5 +1,6 @@
 import os, { EOL } from 'node:os';
 import readlinePromises from 'node:readline/promises';
+import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
@@ -17,6 +18,15 @@ const transformArguments = (args) => {
 
     return acc;
   }, {});
+};
+
+const checkExist = async (path) => {
+  try {
+    await fsp.access(path);
+    return true;
+  } catch (error) {
+    return false;
+  }
 };
 
 const init = async () => {
@@ -106,6 +116,45 @@ const init = async () => {
 
         break;
 
+      case 'cat':
+        try {
+          const [targetPath = ''] = args;
+
+          const fullPath = process.cwd() + path.sep + targetPath;
+          const isFile = (await fsp.stat(fullPath)).isFile();
+
+          if (!isFile) {
+            process.stdout.write(`Operation failed. It isn't a file!` + EOL);
+            break;
+          }
+
+          const ws = fs.createReadStream(fullPath);
+          ws.pipe(process.stdout);
+          process.stdout.write(EOL);
+        } catch (error) {
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
+        }
+        break;
+
+      case 'add':
+        try {
+          const [fileName = ''] = args;
+          const filePath = process.cwd() + path.sep + fileName;
+          const isFileExist = await checkExist(filePath);
+
+          if (isFileExist) {
+            process.stdout.write(
+              `Operation failed. File has already existed` + EOL
+            );
+            break;
+          }
+
+          await fsp.writeFile(filePath, '');
+        } catch (error) {
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
+        }
+        break;
+
       case '.exit':
         process.stdout.write(
           `Thank you for using File Manager, ${
@@ -115,6 +164,11 @@ const init = async () => {
         process.exit(0);
 
       default:
+        if (command === '') {
+          process.stdout.write(EOL);
+          break;
+        }
+
         process.stdout.write(
           `Operation failed. Command not found: ${command}` + EOL
         );
