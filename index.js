@@ -175,33 +175,96 @@ const init = async () => {
 
       case 'cp':
         try {
-          const [pathFrom, pathTo] = args;
+          const [pathToFile, pathToNewDirectory] = args;
 
-          const fullPathFrom = path.resolve(process.cwd(), pathFrom);
-          const fullPathTo = path.resolve(process.cwd(), pathTo, pathFrom);
+          const fullPathToFile = path.resolve(process.cwd(), pathToFile);
+          const fullPathToNewDirectory = path.resolve(
+            process.cwd(),
+            pathToNewDirectory,
+            pathToFile
+          );
 
-          const isPathFromExist = await checkExist(fullPathFrom);
-          const isPathToExist = await checkExist(fullPathTo);
+          const isFullPathToFileExist = await checkExist(fullPathToFile);
+          const isFullPathToNewDirectoryExist = await checkExist(
+            fullPathToNewDirectory
+          );
 
-          if (!isPathFromExist) {
+          if (!isFullPathToFileExist) {
             process.stdout.write(`Operation failed. Check path, please!` + EOL);
             break;
           }
 
-          if (isPathToExist) {
+          if (isFullPathToNewDirectoryExist) {
             process.stdout.write(
-              `Operation failed. File has already existed` + EOL
+              `Operation failed. The directory already contains the file.` + EOL
             );
             break;
           }
 
-          const rs = fs.createReadStream(fullPathFrom);
-          const ws = fs.createWriteStream(fullPathTo);
+          const rs = fs.createReadStream(fullPathToFile);
+          const ws = fs.createWriteStream(fullPathToNewDirectory);
 
           await pipeline(rs, ws);
         } catch (error) {
           process.stdout.write(`Operation failed. ${error.message}` + EOL);
         }
+        break;
+
+      case 'mv':
+        try {
+          const [pathToFile, pathToNewDirectory] = args;
+
+          const fullPathToFile = path.resolve(process.cwd(), pathToFile);
+          const fullPathToNewDirectory = path.resolve(
+            process.cwd(),
+            pathToNewDirectory,
+            pathToFile
+          );
+
+          const isFullPathToFileExist = await checkExist(fullPathToFile);
+          const isFullPathToNewDirectoryExist = await checkExist(
+            fullPathToNewDirectory
+          );
+
+          if (!isFullPathToFileExist) {
+            process.stdout.write(`Operation failed. Check path, please!` + EOL);
+            break;
+          }
+
+          if (isFullPathToNewDirectoryExist) {
+            process.stdout.write(
+              `Operation failed. The directory already contains the file.` + EOL
+            );
+            break;
+          }
+
+          const rs = fs.createReadStream(fullPathToFile);
+          const ws = fs.createWriteStream(fullPathToNewDirectory);
+
+          await pipeline(rs, ws);
+          await fsp.rm(fullPathToFile);
+        } catch (error) {
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
+        }
+        break;
+
+      case 'rm':
+        try {
+          const [pathToFile] = args;
+
+          const fullPathToFile = path.resolve(process.cwd(), pathToFile);
+          const isFile = (await fsp.stat(fullPathToFile)).isFile();
+
+          if (!isFile) {
+            process.stdout.write(`Operation failed. It isn't a file!` + EOL);
+            break;
+          }
+
+          await fsp.rm(pathToFile);
+        } catch (error) {
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
+        }
+
         break;
 
       case '.exit':
