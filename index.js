@@ -173,6 +173,37 @@ const init = async () => {
         }
         break;
 
+      case 'cp':
+        try {
+          const [pathFrom, pathTo] = args;
+
+          const fullPathFrom = path.resolve(process.cwd(), pathFrom);
+          const fullPathTo = path.resolve(process.cwd(), pathTo, pathFrom);
+
+          const isPathFromExist = await checkExist(fullPathFrom);
+          const isPathToExist = await checkExist(fullPathTo);
+
+          if (!isPathFromExist) {
+            process.stdout.write(`Operation failed. Check path, please!` + EOL);
+            break;
+          }
+
+          if (isPathToExist) {
+            process.stdout.write(
+              `Operation failed. File has already existed` + EOL
+            );
+            break;
+          }
+
+          const rs = fs.createReadStream(fullPathFrom);
+          const ws = fs.createWriteStream(fullPathTo);
+
+          await pipeline(rs, ws);
+        } catch (error) {
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
+        }
+        break;
+
       case '.exit':
         process.stdout.write(
           `Thank you for using File Manager, ${
