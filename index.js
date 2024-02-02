@@ -4,6 +4,8 @@ import fs from 'node:fs';
 import fsp from 'node:fs/promises';
 import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
+import crypto from 'node:crypto';
+import { stdout } from 'node:process';
 
 const __dirname = import.meta.dirname;
 
@@ -264,6 +266,68 @@ const init = async () => {
         } catch (error) {
           process.stdout.write(`Operation failed. ${error.message}` + EOL);
         }
+
+        break;
+
+      case 'os':
+        try {
+          const [arg] = args;
+
+          if (arg === '--EOL') {
+            process.stdout.write(EOL);
+            break;
+          }
+
+          if (arg === '--cpus') {
+            console.log(os.cpus());
+            break;
+          }
+
+          if (arg === '--homedir') {
+            console.log(os.homedir());
+            break;
+          }
+
+          if (arg === '--username') {
+            console.log(os.userInfo().username);
+            break;
+          }
+
+          if (arg === '--architecture') {
+            console.log(os.arch());
+            break;
+          }
+
+          if (!arg) {
+            process.stdout.write(`Operation failed. Provide arguments` + EOL);
+          }
+        } catch (error) {
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
+        }
+        break;
+
+      case 'hash':
+        const [pathToFile] = args;
+
+        const fullPathToFile = path.resolve(process.cwd(), pathToFile);
+
+        try {
+          (await fsp.stat(fullPathToFile)).isFile();
+          break;
+        } catch (error) {
+          process.stdout.write(`Operation failed. It isn't a file!` + EOL);
+          break;
+        }
+
+        const hash = crypto.createHash('sha256');
+        const rs = fs.createReadStream(pathToFile);
+        rs.on('data', (data) => hash.update(data));
+        rs.on('end', () => {
+          process.stdout.write(`${hash.digest('hex')}${EOL}`);
+        });
+        rs.on('error', (error) => {
+          process.stdout.write(`Operation failed. ${error}` + EOL);
+        });
 
         break;
 
