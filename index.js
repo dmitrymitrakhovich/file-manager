@@ -6,6 +6,7 @@ import path from 'node:path';
 import { pipeline } from 'node:stream/promises';
 import crypto from 'node:crypto';
 import { stdout } from 'node:process';
+import { createBrotliCompress, createBrotliDecompress } from 'node:zlib';
 
 const __dirname = import.meta.dirname;
 
@@ -329,6 +330,60 @@ const init = async () => {
           process.stdout.write(`Operation failed. ${error}` + EOL);
         });
 
+        break;
+
+      case 'compress':
+        try {
+          const [pathToFile, pathToDestination] = args;
+
+          const fullPathToFile = path.resolve(process.cwd(), pathToFile);
+          const fullPathToDestination = path.resolve(
+            process.cwd(),
+            pathToDestination,
+            pathToFile + '.br'
+          );
+
+          const isFullPathToFileExist = await checkExist(fullPathToFile);
+
+          if (!isFullPathToFileExist) {
+            process.stdout.write(`Operation failed. Check path, please!` + EOL);
+            break;
+          }
+
+          const rs = fs.createReadStream(fullPathToFile);
+          const ws = fs.createWriteStream(fullPathToDestination);
+
+          const brotli = createBrotliCompress();
+
+          await pipeline(rs, brotli, ws);
+        } catch (error) {
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
+        }
+        break;
+
+      case 'decompress':
+        try {
+          const [pathToFile, pathToDestination] = args;
+
+          const fullPathToFile = path.resolve(process.cwd(), pathToFile);
+          const fullPathToDestination = path.resolve(
+            process.cwd(),
+            pathToDestination,
+            pathToFile.slice(0, -3)
+          );
+
+          console.log(fullPathToFile);
+          console.log(fullPathToDestination);
+
+          const rs = fs.createReadStream(fullPathToFile);
+          const ws = fs.createWriteStream(fullPathToDestination);
+
+          const decompressBrotli = createBrotliDecompress();
+
+          await pipeline(rs, decompressBrotli, ws);
+        } catch (error) {
+          process.stdout.write(`Operation failed. ${error.message}` + EOL);
+        }
         break;
 
       case '.exit':
