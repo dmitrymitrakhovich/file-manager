@@ -1,6 +1,6 @@
 import { readdir } from "node:fs/promises";
-import { EOL, homedir } from "node:os";
-import { chdir, cwd, stdout } from "node:process";
+import { homedir } from "node:os";
+import { chdir } from "node:process";
 import { table } from "node:console";
 
 import { getResolvedPath, showError } from "./utils.js";
@@ -23,10 +23,6 @@ const getListWithTypesSortedByTypes = (list) => {
   return sortedList;
 };
 
-const showCurrentPath = () => {
-  stdout.write(`You are currently in ${cwd()}` + EOL);
-};
-
 export const getListOfDirsAndFiles = async (args) => {
   try {
     const [targetPath = "."] = args;
@@ -44,7 +40,6 @@ export const getListOfDirsAndFiles = async (args) => {
 export const navigateUp = () => {
   try {
     chdir("..");
-    showCurrentPath();
   } catch (error) {
     showError(error);
   }
@@ -59,7 +54,6 @@ export const changeDirectory = (args) => {
     }
 
     chdir(getResolvedPath(targetPath));
-    showCurrentPath();
   } catch (error) {
     showError(error);
   }

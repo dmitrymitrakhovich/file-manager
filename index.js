@@ -19,7 +19,7 @@ import { rl } from "./src/readline.js";
 import { calculateHashForFile } from "./src/hash.js";
 import { compressFile, decompressFile } from "./src/brotli.js";
 
-import { showError, transformArguments } from "./src/utils.js";
+import { showCurrentPath, showError, transformArguments } from "./src/utils.js";
 
 const init = async () => {
   try {
@@ -92,6 +92,8 @@ const init = async () => {
           hasUnknownCommand(command);
           break;
       }
+
+      showCurrentPath();
     });
 
     rl.on("close", () => {

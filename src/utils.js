@@ -9,6 +9,10 @@ export const getResolvedPath = (...args) => {
   return resolve(cwd(), ...args);
 };
 
+export const showCurrentPath = () => {
+  stdout.write(`You are currently in ${cwd()}` + EOL);
+};
+
 export const showError = (error = "") => {
   return stdout.write(`Operation failed! ${isDev ? error : ""}` + EOL);
 };
