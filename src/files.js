@@ -9,6 +9,7 @@ export const readFile = async (args) => {
   try {
     const [targetPath] = args;
     const rs = createReadStream(getResolvedPath(targetPath));
+    rs.on('error', (error) => showError(error));
     rs.pipe(stdout);
   } catch (error) {
     showError(error);
