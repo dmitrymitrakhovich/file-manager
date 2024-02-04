@@ -1,8 +1,9 @@
-import { createReadStream, createWriteStream } from 'node:fs';
-import { rename, rm, writeFile } from 'node:fs/promises';
-import { stdout } from 'node:process';
+import { createReadStream, createWriteStream } from "node:fs";
+import { rename, rm, writeFile } from "node:fs/promises";
+import { stdout } from "node:process";
+import { pipeline } from "node:stream/promises";
 
-import { checkExists, getResolvedPath, showError } from './utils.js';
+import { checkExists, getResolvedPath, showError } from "./utils.js";
 
 export const readFile = async (args) => {
   try {
@@ -24,7 +25,7 @@ export const addFile = async (args) => {
       showError();
     }
 
-    await writeFile(absolutePathToFile, '');
+    await writeFile(absolutePathToFile, "");
   } catch (error) {
     showError(error);
   }

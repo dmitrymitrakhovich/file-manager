@@ -1,7 +1,7 @@
-import { access } from 'node:fs/promises';
-import { EOL } from 'node:os';
-import { resolve } from 'node:path';
-import { cwd, stdout } from 'node:process';
+import { access } from "node:fs/promises";
+import { EOL } from "node:os";
+import { resolve } from "node:path";
+import { cwd, stdout } from "node:process";
 
 const isDev = true;
 
@@ -9,14 +9,14 @@ export const getResolvedPath = (...args) => {
   return resolve(cwd(), ...args);
 };
 
-export const showError = (error = '') => {
-  return stdout.write(`Operation failed! ${isDev ? error : ''}` + EOL);
+export const showError = (error = "") => {
+  return stdout.write(`Operation failed! ${isDev ? error : ""}` + EOL);
 };
 
 export const transformArguments = (args) => {
   return args.reduce((acc, item) => {
-    if (item.startsWith('--')) {
-      const [key, value] = item.split('=');
+    if (item.startsWith("--")) {
+      const [key, value] = item.split("=");
       acc[key.slice(2)] = value;
     } else {
       acc[item] = item;

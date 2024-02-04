@@ -1,13 +1,14 @@
-import { readdir } from 'node:fs/promises';
-import { EOL, homedir } from 'node:os';
-import { chdir, cwd, stdout } from 'node:process';
+import { readdir } from "node:fs/promises";
+import { EOL, homedir } from "node:os";
+import { chdir, cwd, stdout } from "node:process";
+import { table } from "node:console";
 
-import { getResolvedPath, showError } from './utils.js';
+import { getResolvedPath, showError } from "./utils.js";
 
 const getListWithTypesSortedByTypes = (list) => {
   const fileTypes = {
-    1: 'file',
-    2: 'directory',
+    1: "file",
+    2: "directory",
   };
 
   const sortedList = list
@@ -28,13 +29,13 @@ const showCurrentPath = () => {
 
 export const getListOfDirsAndFiles = async (args) => {
   try {
-    const [targetPath = '.'] = args;
+    const [targetPath = "."] = args;
     const list = await readdir(getResolvedPath(targetPath), {
       withFileTypes: true,
     });
 
     const listWithTypesSortedByTypes = getListWithTypesSortedByTypes(list);
-    console.table(listWithTypesSortedByTypes);
+    table(listWithTypesSortedByTypes);
   } catch (error) {
     showError(error);
   }
@@ -42,7 +43,7 @@ export const getListOfDirsAndFiles = async (args) => {
 
 export const navigateUp = () => {
   try {
-    chdir('..');
+    chdir("..");
     showCurrentPath();
   } catch (error) {
     showError(error);
@@ -51,7 +52,7 @@ export const navigateUp = () => {
 
 export const changeDirectory = (args) => {
   try {
-    const [targetPath = ''] = args;
+    const [targetPath = ""] = args;
 
     if (!targetPath) {
       chdir(homedir());

@@ -1,8 +1,8 @@
-import { createReadStream, createWriteStream } from 'node:fs';
-import { createBrotliCompress, createBrotliDecompress } from 'node:zlib';
-import { pipeline } from 'node:stream/promises';
+import { createReadStream, createWriteStream } from "node:fs";
+import { createBrotliCompress, createBrotliDecompress } from "node:zlib";
+import { pipeline } from "node:stream/promises";
 
-import { checkExists, getResolvedPath, showError } from './utils.js';
+import { checkExists, getResolvedPath, showError } from "./utils.js";
 
 export const compressFile = async (args) => {
   try {
@@ -11,7 +11,7 @@ export const compressFile = async (args) => {
     const absolutePathToFile = getResolvedPath(pathToFile);
     const absolutePathToDestination = getResolvedPath(
       pathToDestination,
-      pathToFile + '.br'
+      pathToFile + ".br"
     );
 
     const isAbsolutePathToFileExist = await checkExists(absolutePathToFile);

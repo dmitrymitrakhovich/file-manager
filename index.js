@@ -1,4 +1,4 @@
-import { argv } from 'node:process';
+import { argv } from "node:process";
 
 import {
   readFile,
@@ -7,19 +7,19 @@ import {
   moveFile,
   removeFile,
   renameFile,
-} from './src/files.js';
-import { close, greeting, hasUnknownCommand } from './src/general.js';
+} from "./src/files.js";
+import { close, greeting, hasUnknownCommand } from "./src/general.js";
 import {
   getListOfDirsAndFiles,
   navigateUp,
   changeDirectory,
-} from './src/navigation.js';
-import { getSystemInfo } from './src/system-info.js';
-import { rl } from './src/readline.js';
-import { calculateHashForFile } from './src/hash.js';
-import { compressFile, decompressFile } from './src/brotli.js';
+} from "./src/navigation.js";
+import { getSystemInfo } from "./src/system-info.js";
+import { rl } from "./src/readline.js";
+import { calculateHashForFile } from "./src/hash.js";
+import { compressFile, decompressFile } from "./src/brotli.js";
 
-import { showError, transformArguments } from './src/utils.js';
+import { showError, transformArguments } from "./src/utils.js";
 
 const init = async () => {
   try {
@@ -28,63 +28,63 @@ const init = async () => {
 
     greeting(username);
 
-    rl.on('line', async (line) => {
-      const [command, ...args] = line.split(' ');
+    rl.on("line", async (line) => {
+      const [command, ...args] = line.split(" ");
 
       switch (command) {
-        case 'ls':
+        case "ls":
           getListOfDirsAndFiles(args);
           break;
 
-        case 'up':
+        case "up":
           navigateUp();
           break;
 
-        case 'cd':
+        case "cd":
           changeDirectory(args);
           break;
 
-        case 'cat':
+        case "cat":
           await readFile(args);
           break;
 
-        case 'add':
+        case "add":
           addFile(args);
           break;
 
-        case 'rn':
+        case "rn":
           renameFile(args);
           break;
 
-        case 'cp':
+        case "cp":
           copyFile(args);
           break;
 
-        case 'mv':
+        case "mv":
           moveFile(args);
           break;
 
-        case 'rm':
+        case "rm":
           removeFile(args);
           break;
 
-        case 'os':
+        case "os":
           getSystemInfo(args);
           break;
 
-        case 'hash':
+        case "hash":
           calculateHashForFile(args);
           break;
 
-        case 'compress':
+        case "compress":
           compressFile(args);
           break;
 
-        case 'decompress':
+        case "decompress":
           decompressFile(args);
           break;
 
-        case '.exit':
+        case ".exit":
           close(username);
           break;
 
@@ -94,7 +94,7 @@ const init = async () => {
       }
     });
 
-    rl.on('close', () => {
+    rl.on("close", () => {
       close(username);
     });
   } catch (error) {
