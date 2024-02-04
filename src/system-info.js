@@ -12,7 +12,7 @@ export const getSystemInfo = async (args) => {
     }
 
     if (arg === "--cpus") {
-      return log(cpus());
+      return log(cpus().map(({ model, speed }) => ({ model, speed })));
     }
 
     if (arg === "--homedir") {
