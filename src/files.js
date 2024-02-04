@@ -22,7 +22,7 @@ export const addFile = async (args) => {
     const isFileExists = await checkExists(absolutePathToFile);
 
     if (isFileExists) {
-      showError();
+      return showError();
     }
 
     await writeFile(absolutePathToFile, "");
@@ -39,7 +39,7 @@ export const renameFile = async (args) => {
     const isFileExists = await checkExists(absolutePathToNewFile);
 
     if (isFileExists) {
-      showError();
+      return showError();
     }
 
     await rename(absolutePathToFile, newFileName);
@@ -63,7 +63,7 @@ export const copyFile = async (args) => {
     );
 
     if (isAbsolutePathToNewFileExist) {
-      showError();
+      return showError();
     }
 
     const rs = createReadStream(absolutePathToFile);

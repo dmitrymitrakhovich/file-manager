@@ -33,7 +33,7 @@ const init = async () => {
 
       switch (command) {
         case "ls":
-          getListOfDirsAndFiles(args);
+          await getListOfDirsAndFiles(args);
           break;
 
         case "up":
@@ -49,39 +49,39 @@ const init = async () => {
           break;
 
         case "add":
-          addFile(args);
+          await addFile(args);
           break;
 
         case "rn":
-          renameFile(args);
+          await renameFile(args);
           break;
 
         case "cp":
-          copyFile(args);
+          await copyFile(args);
           break;
 
         case "mv":
-          moveFile(args);
+          await moveFile(args);
           break;
 
         case "rm":
-          removeFile(args);
+          await removeFile(args);
           break;
 
         case "os":
-          getSystemInfo(args);
+          await getSystemInfo(args);
           break;
 
         case "hash":
-          calculateHashForFile(args);
+          await calculateHashForFile(args);
           break;
 
         case "compress":
-          compressFile(args);
+          await compressFile(args);
           break;
 
         case "decompress":
-          decompressFile(args);
+          await decompressFile(args);
           break;
 
         case ".exit":

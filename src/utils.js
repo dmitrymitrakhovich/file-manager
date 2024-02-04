@@ -3,7 +3,7 @@ import { EOL } from "node:os";
 import { resolve } from "node:path";
 import { cwd, stdout } from "node:process";
 
-const isDev = true;
+const isDev = false;
 
 export const getResolvedPath = (...args) => {
   return resolve(cwd(), ...args);
